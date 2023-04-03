@@ -6,22 +6,14 @@
 #define TCPCLIENT_BOOK_H
 
 #include <QWidget>
-
-
-QT_BEGIN_NAMESPACE
-namespace Ui { class book; }
-QT_END_NAMESPACE
-
-class book : public QWidget {
+class Book : public QWidget {
 Q_OBJECT
 
 public:
-    explicit book(QWidget *parent = nullptr);
-
-    ~book() override;
+    explicit Book(QWidget *parent = nullptr);
 
 private:
-    Ui::book *ui;
+
 };
 
 

@@ -9,19 +9,19 @@
 
 
 QT_BEGIN_NAMESPACE
-namespace Ui { class online; }
+namespace Ui { class Online; }
 QT_END_NAMESPACE
 
-class online : public QWidget {
+class Online : public QWidget {
 Q_OBJECT
 
 public:
-    explicit online(QWidget *parent = nullptr);
+    explicit Online(QWidget *parent = nullptr);
 
-    ~online() override;
+    ~Online() override;
 
 private:
-    Ui::online *ui;
+    Ui::Online *ui;
 };
 
 

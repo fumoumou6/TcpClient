@@ -6,23 +6,27 @@
 #define TCPCLIENT_OPEWIDGET_H
 
 #include <QWidget>
+#include <QStackedWidget>
 #include "QListWidget"
-
-QT_BEGIN_NAMESPACE
-namespace Ui { class OpeWidget; }
-QT_END_NAMESPACE
+#include "../friend/friend.h"
+#include "../book/book.h"
 
 class OpeWidget : public QWidget {
 Q_OBJECT
 
 public:
     explicit OpeWidget(QWidget *parent = nullptr);
+signals:
 
-    ~OpeWidget() override;
+public slots:
+
 
 private:
-    Ui::OpeWidget *ui;
     QListWidget *m_pListW;
+    Friend *m_pFriend;
+    Book *m_pBook;
+
+    QStackedWidget *m_pSW;
 };
 
 
