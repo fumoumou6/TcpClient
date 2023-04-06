@@ -21,6 +21,6 @@ add_executable(TcpClient
         UI/login/tcpclient.cpp
         UI/login/tcpclient.h
         UI/login/tcpclient.ui
-        func/portocol.h func/portocol.cpp UI/ope/OpeWidget.cpp UI/ope/OpeWidget.h UI/book/book.cpp UI/book/book.h UI/friend/friend.cpp UI/friend/friend.h UI/online/Online.cpp UI/online/Online.h UI/online/Online.ui)
+        func/protocol.h func/protocol.cpp UI/ope/OpeWidget.cpp UI/ope/OpeWidget.h UI/book/book.cpp UI/book/book.h UI/friend/friend.cpp UI/friend/friend.h UI/online/Online.cpp UI/online/Online.h UI/online/Online.ui)
 
 target_link_libraries(TcpClient PRIVATE Qt5::Widgets Qt5::Network)

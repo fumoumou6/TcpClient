@@ -8,7 +8,7 @@
 #include "QMessageBox"
 #include "QTcpSocket"
 #include "QHostAddress"
-
+#include "../ope/OpeWidget.h"
 QT_BEGIN_NAMESPACE
 namespace Ui { class TcpClient; }
 QT_END_NAMESPACE
@@ -22,6 +22,9 @@ public:
     ~TcpClient();
 
     void loadConfig();
+
+    static TcpClient &getInstance();
+    QTcpSocket &getTcpSocket();
 
 public slots:
     void showConnect();

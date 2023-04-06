@@ -5,7 +5,8 @@
 // You may need to build the project (run Qt uic code generator) to get "ui_Friend.h" resolved
 
 #include "friend.h"
-
+#include "./func/protocol.h"
+#include "./UI/login/tcpclient.h"
 
 Friend::Friend(QWidget *parent) : QWidget(parent){
     m_pShowMsgTE = new QTextEdit;
@@ -48,14 +49,38 @@ Friend::Friend(QWidget *parent) : QWidget(parent){
     setLayout(pMain);                       /*设置界面*/
 
     /*连接显示在线用户按键的信号*/
-    connect(m_pShowOnlineUsrPB, SIGNAL(clicked(bool)), this, SLOT(showOnline()));
+    connect(m_pShowOnlineUsrPB,
+            SIGNAL(clicked(bool)),
+            this,
+            SLOT(showOnline()));
+    connect(m_pSearchUsrPB,
+            SIGNAL(clicked(bool)),
+            this,
+            SLOT(searchUsr()));
 }
 
 void Friend::showOnline() {
     qDebug() << "显示在线用户";
     if (m_pOnline->isHidden()){
         m_pOnline->show();
+        PDU *pdu = mkPDU(0);
+        pdu->uiMsgType = ENUM_MSG_TYPE_ALL_ONLINE_REQUEST;
+        TcpClient::getInstance().getTcpSocket().write((char*)pdu,pdu->uiPDULen);
+        free(pdu);
+        pdu = NULL;
+
     } else{
         m_pOnline->hide();
     }
+}
+
+void Friend::showAllOnlineUsr(PDU *pdu) {
+    if (NULL ==pdu){
+        return;
+    }
+    m_pOnline->showUsr(pdu);
+}
+
+void Friend::searchUsr() {
+
 }

@@ -6,7 +6,7 @@
 #define TCPCLIENT_ONLINE_H
 
 #include <QWidget>
-
+#include "func/protocol.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Online; }
@@ -19,6 +19,8 @@ public:
     explicit Online(QWidget *parent = nullptr);
 
     ~Online() override;
+
+    void showUsr(PDU *pdu);
 
 private:
     Ui::Online *ui;

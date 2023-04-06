@@ -1,7 +1,7 @@
 //
 // Created by fumoumou on 23-3-20.
 //
-#include "portocol.h"
+#include "protocol.h"
 
 PDU *mkPDU(uint uiMsgLen){
     uint uiPDULen = sizeof(PDU)+uiMsgLen;

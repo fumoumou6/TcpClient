@@ -20,9 +20,11 @@ Q_OBJECT
 
 public:
     explicit Friend(QWidget *parent = nullptr);
+    void showAllOnlineUsr(PDU *pdu);
 
 public slots:
     void showOnline();
+    void searchUsr();
 private:
     QTextEdit *m_pShowMsgTE;
     QListWidget *m_FriendListWidget;

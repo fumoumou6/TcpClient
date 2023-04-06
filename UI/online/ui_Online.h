@@ -25,7 +25,7 @@ class Ui_Online
 public:
     QVBoxLayout *verticalLayout_2;
     QHBoxLayout *horizontalLayout;
-    QListWidget *listWidget;
+    QListWidget *online_lw;
     QVBoxLayout *verticalLayout;
     QSpacerItem *verticalSpacer;
     QPushButton *adduser_pb;
@@ -40,10 +40,10 @@ public:
         verticalLayout_2->setObjectName(QString::fromUtf8("verticalLayout_2"));
         horizontalLayout = new QHBoxLayout();
         horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
-        listWidget = new QListWidget(Online);
-        listWidget->setObjectName(QString::fromUtf8("listWidget"));
+        online_lw = new QListWidget(Online);
+        online_lw->setObjectName(QString::fromUtf8("online_lw"));
 
-        horizontalLayout->addWidget(listWidget);
+        horizontalLayout->addWidget(online_lw);
 
         verticalLayout = new QVBoxLayout();
         verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));

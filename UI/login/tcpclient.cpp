@@ -1,6 +1,6 @@
 #include "tcpclient.h"
 #include "./ui_tcpclient.h"
-#include "func/portocol.h"
+#include "func/protocol.h"
 
 TcpClient::TcpClient(QWidget *parent)
     : QWidget(parent)
@@ -86,9 +86,17 @@ void TcpClient::recvMsg() {              /*收到回复报文*/
             if (0 == strcmp(pdu->caData,LOGIN_OK)){
                 QMessageBox::information(this,"登录",LOGIN_OK);
 
+                /*登录成功显示主界面*/
+                OpeWidget::getInstance().show();
+                this->hide();
+
             } else if (0 == strcmp(pdu->caData,LOGIN_FAILED)){
                 QMessageBox::warning(this,"登录",LOGIN_FAILED);
             }
+            break;
+        }
+        case ENUM_MSG_TYPE_ALL_ONLINE_RESPOND:{
+            OpeWidget::getInstance().getFriend()->showAllOnlineUsr(pdu);
             break;
         }
 
@@ -141,6 +149,15 @@ void TcpClient::on_regist_pb_clicked() {
 
 void TcpClient::on_cancel_pb_clicked() {
     qDebug() << "cancel_pb clicked";
+}
+
+TcpClient &TcpClient::getInstance() {
+    static TcpClient instance;
+    return instance;
+}
+
+QTcpSocket &TcpClient::getTcpSocket() {
+    return m_tcpSocket;
 }
 
 
