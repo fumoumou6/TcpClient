@@ -7,6 +7,7 @@
 #include "friend.h"
 #include "./func/protocol.h"
 #include "./UI/login/tcpclient.h"
+#include "QInputDialog"
 
 Friend::Friend(QWidget *parent) : QWidget(parent){
     m_pShowMsgTE = new QTextEdit;
@@ -82,5 +83,16 @@ void Friend::showAllOnlineUsr(PDU *pdu) {
 }
 
 void Friend::searchUsr() {
+    qDebug() << "查找用户";
+    m_strSEarchName = QInputDialog::getText(this,"搜索","用户名:");
+    if (!m_strSEarchName.isEmpty()){
+        qDebug() << m_strSEarchName;
+        PDU *pdu = mkPDU(0);
+        memcpy(pdu->caData,m_strSEarchName.toStdString().c_str(),m_strSEarchName.size());
+        pdu->uiMsgType = ENUM_MSG_TYPE_SERACH_USR_REQUEST;
+        TcpClient::getInstance().getTcpSocket().write((char*)pdu,pdu->uiPDULen);
+        free(pdu);
+        pdu = NULL;
+    }
 
 }

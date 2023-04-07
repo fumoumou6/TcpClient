@@ -21,6 +21,7 @@ Q_OBJECT
 public:
     explicit Friend(QWidget *parent = nullptr);
     void showAllOnlineUsr(PDU *pdu);
+    QString m_strSEarchName;
 
 public slots:
     void showOnline();
@@ -38,6 +39,7 @@ private:
     QPushButton *m_pPrivateChatPB;
 
     Online *m_pOnline;
+
 };
 
 
