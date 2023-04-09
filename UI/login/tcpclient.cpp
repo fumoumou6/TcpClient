@@ -115,6 +115,46 @@ void TcpClient::recvMsg() {              /*收到回复报文*/
             }
             break;
         }
+        case ENUM_MSG_TYPE_ADD_FRIEND_REQUEST:{
+            qDebug() << "回复：加好友回复";
+
+            char caName[32] = {'\0'};;
+            strncpy(caName,pdu->caData+32,32);
+            int ret = QMessageBox::information(this,"添加好友",QString("%1 wanto add friend ?").arg(caName),QMessageBox::Yes,QMessageBox::No);
+            PDU *respdu = mkPDU(0);
+            if (QMessageBox::Yes == ret){
+            pdu->uiMsgType = ENUM_MSG_TYPE_ADD_FRIEND_AGREE;
+            } else {
+                pdu->uiMsgType = ENUM_MSG_TYPE_ADD_FRIEND_REFUSE;
+            }
+
+            break;
+        }
+        case ENUM_MSG_TYPE_ADD_FRIEND_RESPOND:{
+
+
+            qDebug() << "回复：加好友请求";
+            qDebug() << pdu->caData;
+            if (0 == strcmp(UNKNOW_ERROR,pdu->caData)){
+                QMessageBox::information(this,
+                                         "加好友",
+                                         "好友不存在");
+            }else if(0 == strcmp(EXISTED_FRIEND,pdu->caData)){
+                QMessageBox::information(this,
+                                         "加好友",
+                                         "好友已存在");
+            }else if(0 == strcmp(ADD_FRIEND_OFFLINE,pdu->caData)){
+                QMessageBox::information(this,
+                                         "加好友",
+                                         "好友不在线");
+            }else if(0 == strcmp(ADD_FRIEND_NOEXIST,pdu->caData)){
+                QMessageBox::information(this,
+                                         "加好友",
+                                         "用户不存在");
+            }
+            break;
+
+        }
         default:
             break;
     }
@@ -128,6 +168,8 @@ void TcpClient::on_login_pb_clicked() {
     QString strName = ui->name_le->text();
     QString strPwd = ui->pwd_le->text();
     if (!strName.isEmpty()&& !strPwd.isEmpty()){          /*登录操作*/
+
+        m_strLoginName = strName;   /*保存登录信息*/
 
         PDU *pdu = mkPDU(0);
         pdu->uiMsgType = ENUM_MSG_TYPE_LOGIN_REQUEST;
@@ -174,6 +216,12 @@ TcpClient &TcpClient::getInstance() {
 QTcpSocket &TcpClient::getTcpSocket() {
     return m_tcpSocket;
 }
+
+QString TcpClient::loginName() {
+    return m_strLoginName;
+}
+
+
 
 
 

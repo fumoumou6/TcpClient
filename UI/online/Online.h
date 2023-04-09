@@ -7,7 +7,7 @@
 
 #include <QWidget>
 #include "func/protocol.h"
-
+#include "QDebug"
 QT_BEGIN_NAMESPACE
 namespace Ui { class Online; }
 QT_END_NAMESPACE
@@ -21,9 +21,12 @@ public:
     ~Online() override;
 
     void showUsr(PDU *pdu);
-
+public slots:
+    void on_adduser_pb_clicked();
 private:
     Ui::Online *ui;
+
+
 };
 
 
