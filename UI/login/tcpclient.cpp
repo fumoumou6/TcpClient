@@ -120,13 +120,28 @@ void TcpClient::recvMsg() {              /*收到回复报文*/
 
             char caName[32] = {'\0'};;
             strncpy(caName,pdu->caData+32,32);
-            int ret = QMessageBox::information(this,"添加好友",QString("%1 wanto add friend ?").arg(caName),QMessageBox::Yes,QMessageBox::No);
+            int ret = QMessageBox::information(this,"添加好友",
+                                               QString("%1 wanto add friend").arg(caName),
+                                               QMessageBox::Yes,QMessageBox::No);
+
             PDU *respdu = mkPDU(0);
+
+            memcpy(respdu->caData,pdu->caData,64);
+
             if (QMessageBox::Yes == ret){
-            pdu->uiMsgType = ENUM_MSG_TYPE_ADD_FRIEND_AGREE;
+
+                respdu->uiMsgType = ENUM_MSG_TYPE_ADD_FRIEND_AGREE;
+                qDebug() << "同意加好友";
             } else {
-                pdu->uiMsgType = ENUM_MSG_TYPE_ADD_FRIEND_REFUSE;
+
+                respdu->uiMsgType = ENUM_MSG_TYPE_ADD_FRIEND_REFUSE;
+                qDebug() << "拒绝加好友";
+                break;
             }
+            m_tcpSocket.write((char *)respdu,respdu->uiPDULen);
+            qDebug() << "perName" << pdu->caData+32 << "name" << pdu->caData;
+            free(respdu);
+            respdu = NULL;
 
             break;
         }
