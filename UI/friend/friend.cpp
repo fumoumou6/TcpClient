@@ -62,6 +62,10 @@ Friend::Friend(QWidget *parent) : QWidget(parent){
             SIGNAL(clicked(bool)),
             this,
             SLOT(flushFriend()));
+    connect(m_pDelFriendPB,
+            SIGNAL(clicked(bool)),
+            this,
+            SLOT(delFriend()));
 }
 
 void Friend::showOnline() {
@@ -125,4 +129,23 @@ void Friend::updateFriendList(PDU *pdu) {
         m_FriendListWidget->addItem(caName);
 
     }
+}
+
+void Friend::delFriend() {
+    if(NULL != m_FriendListWidget->currentItem()){
+        QString strFriendName = m_FriendListWidget->currentItem()->text();
+        qDebug() << strFriendName;
+        PDU *pdu = mkPDU(0);
+        pdu->uiMsgType = ENUM_MSG_TYPE_DELETE_FRIEND_REQUEST;
+        QString strSelfName = TcpClient::getInstance().loginName();
+        memcpy(pdu->caData,strSelfName.toStdString().c_str(),strSelfName.size());
+        memcpy(pdu->caData+32,strFriendName.toStdString().c_str(),strFriendName.size());
+        TcpClient::getInstance().getTcpSocket().write((char *)pdu,pdu->uiPDULen);
+        free(pdu);
+        pdu =NULL;
+
+    } else{
+        QMessageBox::warning(this,"警告","先选中好友");
+    }
+
 }
