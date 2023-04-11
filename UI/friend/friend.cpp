@@ -58,6 +58,10 @@ Friend::Friend(QWidget *parent) : QWidget(parent){
             SIGNAL(clicked(bool)),
             this,
             SLOT(searchUsr()));
+    connect(m_pFlushFriendPB,
+            SIGNAL(clicked(bool)),
+            this,
+            SLOT(flushFriend()));
 }
 
 void Friend::showOnline() {
@@ -95,4 +99,30 @@ void Friend::searchUsr() {
         pdu = NULL;
     }
 
+}
+
+void Friend::flushFriend() {
+    qDebug() << "刷新好友";
+    QString strName = TcpClient::getInstance().loginName();
+    PDU *pdu = mkPDU(0);
+    pdu->uiMsgType = ENUM_MSG_TYPE_FLUSH_FRIEND_REQUEST;
+    memcpy(pdu->caData,strName.toStdString().c_str(),strName.size());
+    TcpClient::getInstance().getTcpSocket().write((char *)pdu,pdu->uiPDULen);
+    free(pdu);
+    pdu = NULL;
+
+}
+
+void Friend::updateFriendList(PDU *pdu) {
+    if (NULL == pdu){
+        return;
+    }
+    uint uiSize = pdu->uiMsgLen/32;
+    char caName[32] = {'\0'};
+    m_FriendListWidget->clear();
+    for (int i = 0; i < uiSize; ++i) {
+        memcpy(caName,(char *)(pdu->caMsg)+i*32,32);
+        m_FriendListWidget->addItem(caName);
+
+    }
 }

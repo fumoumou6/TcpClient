@@ -170,6 +170,11 @@ void TcpClient::recvMsg() {              /*收到回复报文*/
             break;
 
         }
+        case ENUM_MSG_TYPE_FLUSH_FRIEND_RESPOND:{
+            OpeWidget::getInstance().getFriend()->updateFriendList(pdu);
+
+            break;
+        }
         default:
             break;
     }
