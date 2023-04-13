@@ -8,6 +8,7 @@
 #include "./func/protocol.h"
 #include "./UI/login/tcpclient.h"
 #include "QInputDialog"
+#include "UI/privatechat/privatechat.h"
 
 Friend::Friend(QWidget *parent) : QWidget(parent){
     m_pShowMsgTE = new QTextEdit;
@@ -66,6 +67,10 @@ Friend::Friend(QWidget *parent) : QWidget(parent){
             SIGNAL(clicked(bool)),
             this,
             SLOT(delFriend()));
+    connect(m_pPrivateChatPB,
+            SIGNAL(clicked(bool)),
+            this,
+            SLOT(privateChat()));
 }
 
 void Friend::showOnline() {
@@ -148,4 +153,19 @@ void Friend::delFriend() {
         QMessageBox::warning(this,"警告","先选中好友");
     }
 
+}
+
+void Friend::privateChat() {
+    qDebug() << "私聊按键点击";
+    if (NULL != m_FriendListWidget->currentItem()){
+        QString strChatName = m_FriendListWidget->currentItem()->text();
+        PrivateChat::getInstance().setChatName(strChatName);
+        if (PrivateChat::getInstance().isHidden()){
+            PrivateChat::getInstance().show();
+        }
+
+    } else{
+        QMessageBox::warning(this,"私聊","请选择私聊对象");
+
+    }
 }
