@@ -198,6 +198,12 @@ void TcpClient::recvMsg() {              /*收到回复报文*/
             PrivateChat::getInstance().updateMsg(pdu);
             break;
         }
+        case ENUM_MSG_TYPE_GROUP_CHAT_REQUEST:{
+            qDebug() << "收到群聊消息";
+            OpeWidget::getInstance().getFriend()->updateGroupMsg(pdu);
+
+            break;
+        }
         default:
             break;
     }

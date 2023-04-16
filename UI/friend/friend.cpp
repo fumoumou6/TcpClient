@@ -71,6 +71,10 @@ Friend::Friend(QWidget *parent) : QWidget(parent){
             SIGNAL(clicked(bool)),
             this,
             SLOT(privateChat()));
+    connect(m_pMsgSendPB,
+            SIGNAL(clicked(bool)),
+            this,
+            SLOT(groupChat()));
 }
 
 void Friend::showOnline() {
@@ -168,4 +172,30 @@ void Friend::privateChat() {
         QMessageBox::warning(this,"私聊","请选择私聊对象");
 
     }
+}
+
+void Friend::groupChat() {
+    qDebug() << "群聊按键点击";
+
+    QString strMsg = m_pInputMsgLE->text();
+    if (!strMsg.isEmpty()){
+        PDU *pdu = mkPDU(strMsg.size()+1);
+        pdu->uiMsgType = ENUM_MSG_TYPE_GROUP_CHAT_REQUEST;
+        QString strName = TcpClient::getInstance().loginName();
+        strncpy(pdu->caData,strName.toStdString().c_str(),strName.size());
+        strncpy((char *)(pdu->caMsg),strMsg.toStdString().c_str(),strMsg.size());
+
+        TcpClient::getInstance().getTcpSocket().write((char *)pdu,pdu->uiPDULen);
+
+
+    } else{
+        QMessageBox::warning(this,"群聊","信息不能为空");
+    }
+
+}
+
+void Friend::updateGroupMsg(PDU *pdu) {
+    QString strMsg = QString("%1 says : %2").arg(pdu->caData).arg((char *)pdu->caMsg);
+    m_pShowMsgTE->append(strMsg);
+
 }
