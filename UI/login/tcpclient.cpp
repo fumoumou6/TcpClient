@@ -85,6 +85,9 @@ void TcpClient::recvMsg() {              /*收到回复报文*/
         }
         case ENUM_MSG_TYPE_LOGIN_RESPOND:{
             if (0 == strcmp(pdu->caData,LOGIN_OK)){
+
+                m_strCurPath = QString("./%1").arg(m_strLoginName);
+
                 QMessageBox::information(this,"登录",LOGIN_OK);
 
                 /*登录成功显示主界面*/
@@ -204,6 +207,10 @@ void TcpClient::recvMsg() {              /*收到回复报文*/
 
             break;
         }
+        case ENUM_MSG_TYPE_CREATE_DIR_RESPOND:{
+            QMessageBox::information(this,"创建文件夹",pdu->caData);
+            break;
+        }
         default:
             break;
     }
@@ -268,6 +275,10 @@ QTcpSocket &TcpClient::getTcpSocket() {
 
 QString TcpClient::loginName() {
     return m_strLoginName;
+}
+
+QString TcpClient::curPath() {
+    return m_strCurPath;
 }
 
 
