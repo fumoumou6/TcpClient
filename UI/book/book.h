@@ -17,9 +17,10 @@ Q_OBJECT
 
 public:
     explicit Book(QWidget *parent = nullptr);
+    void updateFileListList(const PDU *pdu);
 public slots:
     void createDir();
-
+    void flushFile();
 private:
     QListWidget *m_pBookListW;
     QPushButton *m_pReturnPB;

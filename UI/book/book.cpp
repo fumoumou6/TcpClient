@@ -44,7 +44,8 @@ Book::Book(QWidget *parent) : QWidget(parent){
 
     connect(m_pCreateDirPB, SIGNAL(clicked(bool)),
             this, SLOT(createDir()));
-
+    connect(m_pFlushFilePB, SIGNAL(clicked(bool)),
+            this, SLOT(flushFile()));
 
 }
 
@@ -70,6 +71,46 @@ void Book::createDir() {
 
     }else{
         QMessageBox::warning(this,"新建文件夹","新文件夹名字不能为空");
+    }
+
+}
+
+void Book::flushFile() {
+    /*刷新文件列表*/
+    qDebug() << "刷新文件列表";
+    QString strCurPath = TcpClient::getInstance().curPath();
+    PDU *pdu = mkPDU(strCurPath.size()+1);
+    pdu->uiMsgType = ENUM_MSG_TYPE_FLUSH_FILE_REQUEST;
+    strncpy((char *)(pdu->caMsg),strCurPath.toStdString().c_str(),strCurPath.size());
+    TcpClient::getInstance().getTcpSocket().write((char *)pdu,pdu->uiPDULen);
+    free(pdu);
+    pdu = NULL;
+}
+
+void Book::updateFileListList(const PDU *pdu) {
+    if (NULL == pdu)
+    {
+        return;
+    }
+    m_pBookListW->clear();
+    FileInfo *pFileInfo = NULL;
+    int iCount = pdu->uiMsgLen/sizeof(FileInfo);
+    for (int i = 0; i < iCount; ++i) {
+        pFileInfo = (FileInfo*)(pdu->caMsg)+i;
+        qDebug() << pFileInfo->caFileName << pFileInfo->iFileTYpe;
+        QListWidgetItem *pItem = new QListWidgetItem;
+
+        /*不会添加ｑｒｃ文件　直接使用的绝对路径*/
+        if (0 == pFileInfo->iFileTYpe){
+
+            pItem->setIcon(QIcon(QPixmap("/home/fumoumou/Desktop/NetDisk/TcpClient/resource/map/dir.jpg")));
+
+        } else if(1 == pFileInfo->iFileTYpe)
+        {
+            pItem->setIcon(QIcon(QPixmap("/home/fumoumou/Desktop/NetDisk/TcpClient/resource/map/reg.jpg")));
+        }
+        pItem->setText(pFileInfo->caFileName);
+        m_pBookListW->addItem(pItem);
     }
 
 }
