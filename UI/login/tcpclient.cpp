@@ -215,6 +215,11 @@ void TcpClient::recvMsg() {              /*收到回复报文*/
             OpeWidget::getInstance().getBook()->updateFileListList(pdu);
             break;
         }
+        case ENUM_MSG_TYPE_DEL_DIR_RESPOND:{
+            QMessageBox::information(this,"删除文件夹",pdu->caData);
+            break;
+
+        }
         default:
             break;
     }
