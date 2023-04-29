@@ -23,6 +23,9 @@ public slots:
     void flushFile();
     void delDir();
     void renameFile();
+    void enterDir(const QModelIndex &index);
+    void clearEnterDir();
+    QString enterDir();
 private:
     QListWidget *m_pBookListW;
     QPushButton *m_pReturnPB;
@@ -35,6 +38,7 @@ private:
     QPushButton *m_pDelFilePB;
     QPushButton *m_pShareFilePB;
 
+    QString m_strEnterDir;
 };
 
 

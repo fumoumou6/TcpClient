@@ -9,6 +9,9 @@
 #include "QMessageBox"
 
 Book::Book(QWidget *parent) : QWidget(parent){
+
+    m_strEnterDir.clear();
+
     m_pBookListW = new QListWidget;
 
      m_pReturnPB = new QPushButton("返回");
@@ -50,6 +53,8 @@ Book::Book(QWidget *parent) : QWidget(parent){
             this, SLOT(delDir()));
     connect(m_pRenamePB, SIGNAL(clicked(bool)),
             this, SLOT(renameFile()));
+    connect(m_pBookListW, SIGNAL(doubleClicked(QModelIndex)),
+            this, SLOT(enterDir(QModelIndex)));
 
 }
 
@@ -163,4 +168,30 @@ void Book::renameFile() {
             QMessageBox::warning(this,"重命名文件","新文件名不能为空");
         }
     }
+}
+
+void Book::enterDir(const QModelIndex &index) {
+//    qDebug() << "enter dir";
+    QString strDirName = index.data().toString();
+//    qDebug() << strDirName;
+    m_strEnterDir = strDirName; /*保存路径*/
+
+    QString strCurPath = TcpClient::getInstance().curPath();
+
+    PDU *pdu = mkPDU(strCurPath.size()+1);
+    pdu->uiMsgType = ENUM_MSG_TYPE_ENTER_DIR_REQUEST;
+    strncpy(pdu->caData,strDirName.toStdString().c_str(),strDirName.size());
+    memcpy(pdu->caMsg,strCurPath.toStdString().c_str(),strCurPath.size());
+
+    TcpClient::getInstance().getTcpSocket().write((char *)pdu,pdu->uiPDULen);
+    free(pdu);
+    pdu = NULL;
+}
+
+void Book::clearEnterDir() {
+    m_strEnterDir.clear();
+}
+
+QString Book::enterDir() {
+    return m_strEnterDir;
 }
