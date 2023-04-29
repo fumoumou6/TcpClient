@@ -220,6 +220,10 @@ void TcpClient::recvMsg() {              /*收到回复报文*/
             break;
 
         }
+        case ENUM_MSG_TYPE_RENAME_FILE_RESPOND:{
+            QMessageBox::information(this,"重命名文件",pdu->caData);
+            break;
+        }
         default:
             break;
     }

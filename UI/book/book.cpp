@@ -48,6 +48,8 @@ Book::Book(QWidget *parent) : QWidget(parent){
             this, SLOT(flushFile()));
     connect(m_pDelDirPB, SIGNAL(clicked(bool)),
             this, SLOT(delDir()));
+    connect(m_pRenamePB, SIGNAL(clicked(bool)),
+            this, SLOT(renameFile()));
 
 }
 
@@ -133,5 +135,32 @@ void Book::delDir() {
         TcpClient::getInstance().getTcpSocket().write((char *)pdu,pdu->uiPDULen);
         free(pdu);
         pdu = NULL;
+    }
+}
+
+void Book::renameFile() {
+    QString strCurPath = TcpClient::getInstance().curPath();
+    QListWidgetItem *pItem = m_pBookListW->currentItem();
+    if (NULL == pItem)
+    {
+        QMessageBox::warning(this,"重命名文件","请选择要重命名的文件");
+    } else{
+        QString strOldName = pItem->text();
+        QString strNewName = QInputDialog::getText(this,"重命名文件","请输入新的文件名");
+        if (!strNewName.isEmpty())
+        {
+            PDU *pdu = mkPDU(strCurPath.size()+1);
+            pdu->uiMsgType = ENUM_MSG_TYPE_RENAME_FILE_REQUEST;
+            strncpy(pdu->caData,strOldName.toStdString().c_str(),strOldName.size());
+            strncpy(pdu->caData+32,strNewName.toStdString().c_str(),strNewName.size());
+            memcpy(pdu->caMsg,strCurPath.toStdString().c_str(),strCurPath.size());
+
+            TcpClient::getInstance().getTcpSocket().write((char *)pdu,pdu->uiPDULen);
+            free(pdu);
+            pdu = NULL;
+        } else
+        {
+            QMessageBox::warning(this,"重命名文件","新文件名不能为空");
+        }
     }
 }

@@ -22,6 +22,7 @@ public slots:
     void createDir();
     void flushFile();
     void delDir();
+    void renameFile();
 private:
     QListWidget *m_pBookListW;
     QPushButton *m_pReturnPB;
