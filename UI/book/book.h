@@ -30,6 +30,7 @@ public slots:
     void returnPre();
     void uploadFile();
     void uploadFileData();
+    void delRegFile();
 private:
     QListWidget *m_pBookListW;
     QPushButton *m_pReturnPB;

@@ -64,6 +64,8 @@ Book::Book(QWidget *parent) : QWidget(parent){
             this, SLOT(uploadFile()));
     connect(m_pTimer, SIGNAL(timeout()),
             this, SLOT(uploadFileData()));
+    connect(m_pDelFilePB, SIGNAL(clicked(bool)),
+            this, SLOT(delRegFile()));
 }
 
 void Book::createDir() {
@@ -284,5 +286,24 @@ void Book::uploadFileData() {
     delete[] pBuffer;
 
     pBuffer = NULL;
+}
+
+void Book::delRegFile() {
+    QString strCurPath = TcpClient::getInstance().curPath();
+    QListWidgetItem *pItem = m_pBookListW->currentItem();
+    if (NULL == pItem)
+    {
+        QMessageBox::warning(this,"删除文件","请选择要删除的文件");
+    } else{
+        QString strDelName = pItem->text();
+        PDU *pdu = mkPDU(strCurPath.size()+1);
+        pdu->uiMsgType = ENUM_MSG_TYPE_DEL_FILE_REQUEST;
+        strncpy(pdu->caData,strDelName.toStdString().c_str(),strDelName.size());
+        memcpy(pdu->caMsg,strCurPath.toStdString().c_str(),strCurPath.size());
+
+        TcpClient::getInstance().getTcpSocket().write((char *)pdu,pdu->uiPDULen);
+        free(pdu);
+        pdu = NULL;
+    }
 }
 
