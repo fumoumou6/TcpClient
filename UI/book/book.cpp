@@ -7,10 +7,13 @@
 #include "../login/tcpclient.h"
 #include "QInputDialog"
 #include "QMessageBox"
+#include "QFileDialog"
 
 Book::Book(QWidget *parent) : QWidget(parent){
 
     m_strEnterDir.clear();
+
+    m_pTimer = new QTimer;
 
     m_pBookListW = new QListWidget;
 
@@ -57,6 +60,10 @@ Book::Book(QWidget *parent) : QWidget(parent){
             this, SLOT(enterDir(QModelIndex)));
     connect(m_pReturnPB, SIGNAL(clicked(bool)),
             this, SLOT(returnPre()));
+    connect(m_pUploadPB, SIGNAL(clicked(bool)),
+            this, SLOT(uploadFile()));
+    connect(m_pTimer, SIGNAL(timeout()),
+            this, SLOT(uploadFileData()));
 }
 
 void Book::createDir() {
@@ -214,3 +221,68 @@ void Book::returnPre() {
         flushFile();     /*刷新列表*/
     }
 }
+
+void Book::uploadFile() {
+
+    m_strUploadFilePath = QFileDialog::getOpenFileName();
+    qDebug() << m_strUploadFilePath;
+    if (!m_strUploadFilePath.isEmpty())
+    {
+        int index = m_strUploadFilePath.lastIndexOf('/');
+        QString strFileName = m_strUploadFilePath.right(m_strUploadFilePath.size()-index-1);
+        qDebug() << strFileName; /*显示文件名*/
+
+        QFile file(m_strUploadFilePath);
+        qint64 fileSize = file.size(); /*获得文件大小*/
+
+        QString strCurPath = TcpClient::getInstance().curPath();
+
+        PDU *pdu = mkPDU(strCurPath.size()+1);
+        pdu->uiMsgType = ENUM_MSG_TYPE_UPLOAD_FILE_REQUEST;
+        memcpy(pdu->caMsg,strCurPath.toStdString().c_str(), strCurPath.size());
+        sprintf(pdu->caData,"%s %11d",strFileName.toStdString().c_str(),fileSize);
+
+        qDebug() << "上传文件名" << strFileName;
+        TcpClient::getInstance().getTcpSocket().write((char *)pdu,pdu->uiPDULen);
+        free(pdu);
+        pdu = NULL;
+
+        m_pTimer->start(1000);
+
+    } else
+    {
+        QMessageBox::warning(this,"上传文件","上传文件名称不能为空");
+    }
+}
+
+void Book::uploadFileData() {
+    m_pTimer->stop();
+    QFile file(m_strUploadFilePath);
+    if (!file.open(QIODevice::ReadOnly))
+    {
+        QMessageBox::warning(this,"上传文件","打开文件失败");
+        return;
+    }
+    char *pBuffer = new char[4096];
+    qint64 ret = 0;
+    while (true)
+    {
+        ret = file.read(pBuffer,4096);
+        if (ret > 0 && ret <= 4096)
+        {
+            TcpClient::getInstance().getTcpSocket().write(pBuffer,ret);
+        } else if (0 == ret)
+        {
+            break;
+        } else
+        {
+            QMessageBox::warning(this,"上传文件","上传文件失败：读文件失败");
+            break;
+        }
+    }
+    file.close();
+    delete[] pBuffer;
+
+    pBuffer = NULL;
+}
+

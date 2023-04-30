@@ -235,6 +235,10 @@ void TcpClient::recvMsg() {              /*收到回复报文*/
             OpeWidget::getInstance().getBook()->clearEnterDir();
             break;
         }
+        case ENUM_MSG_TYPE_UPLOAD_FILE_RESPOND:{
+            QMessageBox::information(this,"上传文件",pdu->caData);
+            break;
+        }
         default:
             break;
     }

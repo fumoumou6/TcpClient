@@ -11,6 +11,7 @@
 #include "QHBoxLayout"
 #include "QVBoxLayout"
 #include "../func/protocol.h"
+#include "QTimer"
 
 class Book : public QWidget {
 Q_OBJECT
@@ -27,6 +28,8 @@ public slots:
     void clearEnterDir();
     QString enterDir();
     void returnPre();
+    void uploadFile();
+    void uploadFileData();
 private:
     QListWidget *m_pBookListW;
     QPushButton *m_pReturnPB;
@@ -40,6 +43,8 @@ private:
     QPushButton *m_pShareFilePB;
 
     QString m_strEnterDir;
+    QString m_strUploadFilePath;
+    QTimer *m_pTimer;
 };
 
 
