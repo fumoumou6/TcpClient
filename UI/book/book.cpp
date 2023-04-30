@@ -55,7 +55,8 @@ Book::Book(QWidget *parent) : QWidget(parent){
             this, SLOT(renameFile()));
     connect(m_pBookListW, SIGNAL(doubleClicked(QModelIndex)),
             this, SLOT(enterDir(QModelIndex)));
-
+    connect(m_pReturnPB, SIGNAL(clicked(bool)),
+            this, SLOT(returnPre()));
 }
 
 void Book::createDir() {
@@ -194,4 +195,22 @@ void Book::clearEnterDir() {
 
 QString Book::enterDir() {
     return m_strEnterDir;
+}
+
+void Book::returnPre() {
+    QString strCurPath = TcpClient::getInstance().curPath();
+    QString strRootPath = "./" + TcpClient::getInstance().loginName();
+    if (strCurPath == strRootPath)
+    {
+        QMessageBox::warning(this,"返回","返回失败: 已经在顶层目录中");
+    } else
+    {
+        int index = strCurPath.lastIndexOf('/');
+        strCurPath.remove(index, strCurPath.size()-index);
+        qDebug() << "return -->" << strCurPath;
+        TcpClient::getInstance().setCurPath(strCurPath);
+
+        clearEnterDir();
+        flushFile();     /*刷新列表*/
+    }
 }

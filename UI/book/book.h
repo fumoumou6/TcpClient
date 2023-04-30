@@ -26,6 +26,7 @@ public slots:
     void enterDir(const QModelIndex &index);
     void clearEnterDir();
     QString enterDir();
+    void returnPre();
 private:
     QListWidget *m_pBookListW;
     QPushButton *m_pReturnPB;

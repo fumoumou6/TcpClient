@@ -27,6 +27,7 @@ public:
     QTcpSocket &getTcpSocket();
     QString loginName();
     QString curPath();
+    void setCurPath(QString strCurPath);
 
 public slots:
     void showConnect();

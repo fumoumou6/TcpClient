@@ -305,6 +305,10 @@ QString TcpClient::curPath() {
     return m_strCurPath;
 }
 
+void TcpClient::setCurPath(QString strCurPath) {
+    m_strCurPath = strCurPath;
+}
+
 
 
 
