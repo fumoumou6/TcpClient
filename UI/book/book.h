@@ -19,18 +19,24 @@ Q_OBJECT
 public:
     explicit Book(QWidget *parent = nullptr);
     void updateFileListList(const PDU *pdu);
+    void clearEnterDir();
+    QString enterDir();
+    void setDownloadStatus(bool status);
+    bool getDownloadStatus();
+    QString getSaveFilePath();
+    qint64 m_iTotal = 0;    /*总大小*/         /*注意初始化，防止接收时无法结束*/
+    qint64 m_iReceived = 0; /*已接受大小*/
 public slots:
     void createDir();
     void flushFile();
     void delDir();
     void renameFile();
     void enterDir(const QModelIndex &index);
-    void clearEnterDir();
-    QString enterDir();
     void returnPre();
     void uploadFile();
     void uploadFileData();
     void delRegFile();
+    void downloadFile();
 private:
     QListWidget *m_pBookListW;
     QPushButton *m_pReturnPB;
@@ -46,6 +52,9 @@ private:
     QString m_strEnterDir;
     QString m_strUploadFilePath;
     QTimer *m_pTimer;
+
+    QString m_strSaveFilePath;
+    bool m_bDownload;
 };
 
 

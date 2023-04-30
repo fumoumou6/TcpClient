@@ -9,6 +9,7 @@
 #include "QTcpSocket"
 #include "QHostAddress"
 #include "../ope/OpeWidget.h"
+#include "QByteArray"
 QT_BEGIN_NAMESPACE
 namespace Ui { class TcpClient; }
 QT_END_NAMESPACE
@@ -47,6 +48,7 @@ private:
     QTcpSocket m_tcpSocket;
     QString m_strLoginName;
     QString m_strCurPath;
+    QFile m_file;
 
 };
 #endif // TCPCLIENT_H

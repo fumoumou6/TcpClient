@@ -29,15 +29,18 @@ OpeWidget::OpeWidget(QWidget *parent) : QWidget(parent){
 }
 
 OpeWidget &OpeWidget::getInstance() {
+    qDebug() << "获取OpeWidget";
     static OpeWidget instance;
     return instance;
 }
 
 Friend *OpeWidget::getFriend() {
+    qDebug() << "获取OpeWidget:firend";
     return m_pFriend;
 }
 
 Book *OpeWidget::getBook() {
+    qDebug() << "获取OpeWidget: book";
     return m_pBook;
 }
 

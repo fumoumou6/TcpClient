@@ -12,6 +12,7 @@
 Book::Book(QWidget *parent) : QWidget(parent){
 
     m_strEnterDir.clear();
+    m_bDownload = false;
 
     m_pTimer = new QTimer;
 
@@ -66,6 +67,8 @@ Book::Book(QWidget *parent) : QWidget(parent){
             this, SLOT(uploadFileData()));
     connect(m_pDelFilePB, SIGNAL(clicked(bool)),
             this, SLOT(delRegFile()));
+    connect(m_pDownloadPB, SIGNAL(clicked(bool)),
+            this, SLOT(downloadFile()));
 }
 
 void Book::createDir() {
@@ -107,11 +110,14 @@ void Book::flushFile() {
 }
 
 void Book::updateFileListList(const PDU *pdu) {
+    qDebug() << "更新文件列表";
     if (NULL == pdu)
     {
+        qDebug() << "更新文件列表获取pdu失败";
         return;
     }
     m_pBookListW->clear();
+    qDebug() << "清理文件列表";
     FileInfo *pFileInfo = NULL;
     int iCount = pdu->uiMsgLen/sizeof(FileInfo);
     for (int i = 0; i < iCount; ++i) {
@@ -305,5 +311,54 @@ void Book::delRegFile() {
         free(pdu);
         pdu = NULL;
     }
+}
+
+void Book::downloadFile() {
+    qDebug() << "下载文件请求";
+    QListWidgetItem *pItem = m_pBookListW->currentItem();
+    if (NULL == pItem)
+    {
+        QMessageBox::warning(this,"下载文件","请选择要下载的文件");
+    } else{
+
+        QString strSaveFilePath = QFileDialog::getSaveFileName();
+        if (strSaveFilePath.isEmpty())
+        {
+            QMessageBox::warning(this,"下载文件","请指定要下载的位置");
+            m_strSaveFilePath.clear();
+        } else
+        {
+            m_strSaveFilePath = strSaveFilePath;
+        }
+
+        QString strCurPath = TcpClient::getInstance().curPath();
+
+        PDU *pdu = mkPDU(strCurPath.size()+1);
+        pdu->uiMsgType = ENUM_MSG_TYPE_DOWNLOAD_FILE_REQUEST;
+        QString strFileName = pItem->text();
+        strncpy(pdu->caData,strFileName.toStdString().c_str(),strFileName.size());
+        memcpy(pdu->caMsg,strCurPath.toStdString().c_str(),strCurPath.size());
+
+        TcpClient::getInstance().getTcpSocket().write((char *)pdu,pdu->uiPDULen);
+        free(pdu);
+        pdu = NULL;
+
+
+    }
+}
+
+void Book::setDownloadStatus(bool status) {
+    qDebug() << "setDownloadStatus: " << status;
+    m_bDownload =status;
+}
+
+bool Book::getDownloadStatus() {
+    qDebug() << "getDownloadStatus: " << m_bDownload;
+    return m_bDownload;
+}
+
+QString Book::getSaveFilePath() {
+    qDebug() << "getSaveFilePath: " << m_strSaveFilePath;
+    return m_strSaveFilePath;
 }
 
