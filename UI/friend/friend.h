@@ -24,6 +24,7 @@ public:
     void updateFriendList(PDU *pdu);
     void updateGroupMsg(PDU *pdu);
     QString m_strSEarchName;
+    QListWidget *getFriendLIst();
 
 public slots:
     void showOnline();

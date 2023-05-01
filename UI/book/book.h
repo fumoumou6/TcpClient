@@ -24,6 +24,7 @@ public:
     void setDownloadStatus(bool status);
     bool getDownloadStatus();
     QString getSaveFilePath();
+    QString getShareFileName();
     qint64 m_iTotal = 0;    /*总大小*/         /*注意初始化，防止接收时无法结束*/
     qint64 m_iReceived = 0; /*已接受大小*/
 public slots:
@@ -37,6 +38,7 @@ public slots:
     void uploadFileData();
     void delRegFile();
     void downloadFile();
+    void shareFile();
 private:
     QListWidget *m_pBookListW;
     QPushButton *m_pReturnPB;
@@ -55,6 +57,7 @@ private:
 
     QString m_strSaveFilePath;
     bool m_bDownload;
+    QString m_strShareFileName;
 };
 
 

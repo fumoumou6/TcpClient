@@ -199,3 +199,7 @@ void Friend::updateGroupMsg(PDU *pdu) {
     m_pShowMsgTE->append(strMsg);
 
 }
+
+QListWidget *Friend::getFriendLIst() {
+    return m_FriendListWidget;
+}

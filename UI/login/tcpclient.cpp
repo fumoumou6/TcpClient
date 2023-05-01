@@ -268,6 +268,33 @@ void TcpClient::recvMsg() {              /*收到回复报文*/
 
                 break;
             }
+            case ENUM_MSG_TYPE_SHARE_FILE_RESPOND:{
+                QMessageBox::information(this, "共享文件", pdu->caData);
+                break;
+            }
+            case ENUM_MSG_TYPE_SHARE_FILE_NOTE:{
+                qDebug() << "ENUM_MSG_TYPE_SHARE_FILE_NOTE";
+                char *pPath = new char[pdu->uiMsgLen];
+                memcpy(pPath,pdu->caMsg,pdu->uiMsgLen);
+                char *pos = strrchr(pPath,'/');
+                if (NULL != pos)
+                {
+                    pos++;
+                    QString strNote = QString("%1 share file-> %2 \n Do you accept ?").arg(pdu->caData).arg(pos);
+                    int ret = QMessageBox::question(this,"共享文件",strNote);
+                    if (QMessageBox::Yes == ret)
+                    {
+                        PDU *respdu = mkPDU(pdu->uiMsgLen);
+                        respdu->uiMsgType = ENUM_MSG_TYPE_SHARE_FILE_NOTE_RESPOND;
+                        memcpy(respdu->caMsg,pdu->caMsg,pdu->uiMsgLen);
+                        QString strName = TcpClient::getInstance().loginName();
+                        strcpy(respdu->caData,strName.toStdString().c_str());
+                        m_tcpSocket.write((char *)respdu,respdu->uiPDULen);
+
+                    }
+                }
+                break;
+            }
             default:
                 break;
         }

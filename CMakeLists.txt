@@ -34,6 +34,6 @@ add_executable(TcpClient
         UI/online/Online.ui
         UI/privatechat/privatechat.cpp
         UI/privatechat/privatechat.h
-        UI/privatechat/privatechat.ui)
+        UI/privatechat/privatechat.ui UI/share/sharefile.cpp UI/share/sharefile.h)
 
 target_link_libraries(TcpClient PRIVATE Qt5::Widgets Qt5::Network)
